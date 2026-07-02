@@ -10,6 +10,7 @@ const ratingsDiv = document.getElementById('ratings');
 const scores = {};
 const notes = {};
 let lastReportText = '';
+let reportImageUrl = '';
 
 items.forEach((item) => {
   scores[item.key] = 0;
@@ -24,8 +25,8 @@ items.forEach((item) => {
         ${[1, 2, 3, 4, 5].map((n) => `<button type="button" data-val="${n}">🦕</button>`).join('')}
       </div>
     </div>
-    <button type="button" class="note-toggle" data-key="${item.key}">+ 加註</button>
-    <textarea class="note-field" data-key="${item.key}" placeholder="想補充說明嗎（選填）..." hidden></textarea>
+    <button type="button" class="note-toggle open" data-key="${item.key}">− 收合加註</button>
+    <textarea class="note-field" data-key="${item.key}" placeholder="想補充說明嗎（選填）..."></textarea>
   `;
   ratingsDiv.appendChild(row);
 });
@@ -138,6 +139,7 @@ document.getElementById('form').addEventListener('submit', (event) => {
     lastReportText = buildShareText(report, breakdown, tag, avg, verdict);
 
     document.getElementById('result').classList.add('show');
+    prepareReportImage();
     document.getElementById('result').scrollIntoView({ behavior: 'smooth', block: 'start' });
   }catch(err){
     gaugeCaption.textContent = `⚠️ 發生錯誤：${err.message}`;
@@ -159,9 +161,11 @@ function getVerdict(avg){
 }
 
 function collectReportValues(){
+  const filledDate = document.getElementById('filledDate').value;
+
   return {
     name: document.getElementById('name').value || '🦖',
-    period: document.getElementById('period').value || '本期',
+    filledDate: filledDate || '未填寫',
     q1: document.getElementById('q1').value || '（未填寫）',
     q2: document.getElementById('q2').value || '（未填寫）',
     q3: document.getElementById('q3').value || '（無客訴，暫且放過）',
@@ -179,7 +183,7 @@ function buildScoreBreakdown(){
 }
 
 function buildReportHtml(report, breakdown, verdict){
-  return `<b>填表人：</b>${report.name}　<b>區間：</b>${report.period}\n\n` +
+  return `<b>填表人：</b>${report.name}　<b>填寫日期：</b>${report.filledDate}\n\n` +
     `<b>各項評分</b>\n${breakdown}\n\n` +
     `<b>總評語：</b>${verdict}\n\n` +
     `<b>印象最深：</b>${report.q1}\n` +
@@ -191,7 +195,7 @@ function buildReportHtml(report, breakdown, verdict){
 
 function buildShareText(report, breakdown, tag, avg, verdict){
   return `🦕 小咚服務滿意度調查表 🦕\n` +
-    `填表人：${report.name}　區間：${report.period}\n` +
+    `填表人：${report.name}　填寫日期：${report.filledDate}\n` +
     `總評：${tag}（${avg.toFixed(1)} / 5.0）\n\n` +
     `【各項評分】\n${breakdown.replace(/\n　　備註/g, '\n備註')}\n\n` +
     `總評語：${verdict}\n\n` +
@@ -213,44 +217,74 @@ document.getElementById('copyBtn').addEventListener('click', async () => {
   }
 });
 
-document.getElementById('imgBtn').addEventListener('click', async () => {
+document.getElementById('imgLink').addEventListener('click', (event) => {
   const status = document.getElementById('shareStatus');
+  const link = event.currentTarget;
+
+  if(link.classList.contains('disabled')){
+    event.preventDefault();
+    status.textContent = '圖片還在準備中，請稍候。';
+  }
+});
+
+async function prepareReportImage(){
+  const status = document.getElementById('shareStatus');
+  const link = document.getElementById('imgLink');
+  resetImageLink();
 
   if(typeof html2canvas === 'undefined'){
     status.textContent = '圖片功能載入失敗，請改用「複製報告文字」。';
     return;
   }
 
+  status.textContent = '圖片準備中...';
   const card = document.getElementById('reportCard');
-  status.textContent = '圖片產生中...';
 
   try{
+    await waitForPaint();
     const canvas = await html2canvas(card, { backgroundColor: '#fff8ea', scale: 2 });
+    const blob = await canvasToPngBlob(canvas);
+    reportImageUrl = URL.createObjectURL(blob);
 
-    canvas.toBlob(async (blob) => {
-      const file = new File([blob], '小咚服務滿意度報告.png', { type: 'image/png' });
+    link.href = reportImageUrl;
+    link.download = 'dino-service-report.png';
+    link.classList.remove('disabled');
+    link.removeAttribute('aria-disabled');
+    link.textContent = '🖼️ 下載成圖片';
+    status.textContent = '圖片已準備好。';
+  }catch(err){
+    status.textContent = `圖片產生失敗：${err.message}`;
+  }
+}
 
-      if(navigator.canShare && navigator.canShare({ files: [file] })){
-        try{
-          await navigator.share({ files: [file], title: '小咚服務滿意度報告' });
-          status.textContent = '';
-          return;
-        }catch(err){
-          // The user may cancel native sharing. Fall back to download below.
-        }
+function waitForPaint(){
+  return new Promise((resolve) => {
+    requestAnimationFrame(() => requestAnimationFrame(resolve));
+  });
+}
+
+function resetImageLink(){
+  const link = document.getElementById('imgLink');
+  if(reportImageUrl){
+    URL.revokeObjectURL(reportImageUrl);
+    reportImageUrl = '';
+  }
+
+  link.href = '#';
+  link.classList.add('disabled');
+  link.setAttribute('aria-disabled', 'true');
+  link.textContent = '🖼️ 圖片準備中';
+}
+
+function canvasToPngBlob(canvas){
+  return new Promise((resolve, reject) => {
+    canvas.toBlob((blob) => {
+      if(blob && blob.type === 'image/png'){
+        resolve(blob);
+        return;
       }
 
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = '小咚服務滿意度報告.png';
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
-      status.textContent = '圖片已下載！';
+      reject(new Error('無法建立 PNG 圖片'));
     }, 'image/png');
-  }catch(err){
-    status.textContent = '圖片產生失敗，請改用複製文字。';
-  }
-});
+  });
+}

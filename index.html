@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>客服滿意度調查表</title>
+  <title>🦕客服滿意度調查表</title>
+  <link rel="icon" type="image/svg+xml" href="./assets/favicon.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
@@ -18,7 +19,7 @@
     </div>
 
     <header>
-      <div class="eyebrow">DINO CUSTOMER CARE · 恐龍女友服務部</div>
+      <div class="eyebrow">DINO DESSERT SHOP · 龍龍甜點舖</div>
       <h1>小咚服務滿意度調查表</h1>
       <div class="sub">🦕出品・僅接受🦖本人填寫，評鑑對象為🦕・填完不用蓋章，誠實最重要</div>
     </header>
@@ -28,11 +29,11 @@
         <h2>填表人資料</h2>
         <p class="hint">請如實填寫，這關係到後續是否有宵夜加碼。</p>
         <div class="meta-row">
-          <label>填表人暱稱
+          <label class="name-field">填表人暱稱
             <input type="text" id="name" placeholder="🦖">
           </label>
-          <label>本次評分區間
-            <input type="text" id="period" placeholder="例：這週">
+          <label class="date-field">填寫日期
+            <input type="date" id="filledDate">
           </label>
         </div>
       </section>
@@ -45,7 +46,7 @@
 
       <section class="card" data-num="03">
         <h2>開放式回饋</h2>
-        <p class="hint">文字不夠可以自己加行，我們洗耳恭聽。</p>
+        <p class="hint">想說什麼都可以，我會洗耳恭聽。</p>
 
         <label class="qlabel">本期印象最深刻的一件事</label>
         <textarea id="q1" placeholder="寫下讓妳印象最深的瞬間..."></textarea>
@@ -67,7 +68,7 @@
 
       <section class="card" data-num="04">
         <h2>總體評價</h2>
-        <p class="hint">送出後會自動生成客服滿意度儀表，並附上簽署欄。</p>
+        <p class="hint">送出後會自動生成客服滿意度總評，並附上簽署欄。</p>
         <div class="gauge-wrap">
           <div class="gauge-track">
             <div class="gauge-dino" id="gaugeDino">🦕</div>
@@ -98,7 +99,7 @@
 
       <div class="share-row">
         <button type="button" class="share-btn" id="copyBtn">📋 複製報告文字</button>
-        <button type="button" class="share-btn" id="imgBtn">🖼️ 下載成圖片</button>
+        <a class="share-btn disabled" id="imgLink" href="#" download="dino-service-report.png" aria-disabled="true">🖼️ 圖片準備中</a>
       </div>
       <div class="share-status" id="shareStatus"></div>
     </div>
