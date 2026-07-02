@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<title>🦕客服滿意度調查表</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" defer></script>
+<style>
+  :root{
+    --moss-deep:#2f4a3c;
+    --moss:#4c7a5f;
+    --cream:#f6f1e4;
+    --egg:#fff8ea;
+    --coral:#ff8a65;
+    --coral-deep:#e8703f;
+    --yolk:#f2b134;
+    --line:#d8cdb0;
+    --ink:#2a2620;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:
+      radial-gradient(circle at 12% 8%, #ffffff33 0, transparent 40%),
+      var(--cream);
+    color:var(--ink);
+    font-family:'Noto Sans TC', sans-serif;
+    -webkit-font-smoothing:antialiased;
+    padding:32px 16px 80px;
+  }
+  .wrap{max-width:640px;margin:0 auto;}
+
+  /* ---- footprint trail ---- */
+  .trail{
+    display:flex;
+    justify-content:center;
+    gap:18px;
+    margin-bottom:6px;
+    user-select:none;
+  }
+  .trail span{
+    font-size:15px;
+    opacity:.35;
+    transition:opacity .4s, transform .4s;
+  }
+  .trail span.active{opacity:1;transform:translateY(-3px) scale(1.15);}
+
+  header{
+    text-align:center;
+    margin-bottom:28px;
+  }
+  .eyebrow{
+    font-size:12px;
+    letter-spacing:.28em;
+    color:var(--moss);
+    font-weight:700;
+    margin-bottom:6px;
+  }
+  h1{
+    font-family:'Noto Sans TC', sans-serif;
+    font-size:32px;
+    line-height:1.3;
+    margin:0 0 6px;
+    color:var(--moss-deep);
+    font-weight:900;
+    letter-spacing:.02em;
+  }
+  .sub{
+    font-size:13.5px;
+    color:#6b6250;
+  }
+
+  .card{
+    background:var(--egg);
+    border:2px solid var(--line);
+    border-radius:22px;
+    padding:26px 24px;
+    margin-bottom:20px;
+    position:relative;
+    box-shadow:0 3px 0 var(--line);
+  }
+  .card::before{
+    content:attr(data-num);
+    position:absolute;
+    top:-14px;
+    left:22px;
+    background:var(--moss-deep);
+    color:var(--egg);
+    font-size:12px;
+    font-weight:700;
+    padding:4px 12px;
+    border-radius:999px;
+    letter-spacing:.05em;
+  }
+  .card h2{
+    font-size:17px;
+    margin:6px 0 4px;
+    color:var(--moss-deep);
+    font-weight:700;
+  }
+  .card p.hint{
+    font-size:12.5px;
+    color:#8a806b;
+    margin:0 0 16px;
+  }
+
+  .meta-row{display:flex;gap:12px;flex-wrap:wrap;}
+  .meta-row label{
+    flex:1;
+    min-width:140px;
+    font-size:12.5px;
+    color:var(--moss-deep);
+    font-weight:700;
+  }
+  .meta-row input{
+    width:100%;
+    margin-top:6px;
+    padding:9px 10px;
+    border:1.5px solid var(--line);
+    border-radius:10px;
+    font-family:inherit;
+    font-size:14px;
+    background:#fff;
+  }
+
+  .rate-item{
+    padding:12px 0;
+    border-bottom:1px dashed var(--line);
+  }
+  .rate-item:last-child{border-bottom:none;}
+  .rate-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+  }
+  .rate-label{font-size:14px;font-weight:500;flex:1;padding-right:10px;}
+  .rate-label small{display:block;font-size:11px;color:#948a72;font-weight:400;margin-top:2px;}
+  .stars{display:flex;gap:3px;flex-shrink:0;}
+  .stars button{
+    background:none;border:none;cursor:pointer;
+    font-size:22px;line-height:1;padding:2px;
+    filter:grayscale(1) opacity(.4);
+    transition:transform .15s, filter .15s;
+  }
+  .stars button:hover{transform:scale(1.15);}
+  .stars button.on{filter:none;opacity:1;transform:scale(1.05);}
+  .note-toggle{
+    background:none;
+    border:none;
+    color:var(--moss);
+    font-size:11.5px;
+    font-weight:700;
+    cursor:pointer;
+    padding:6px 0 0;
+  }
+  .note-toggle.open{color:var(--coral-deep);}
+  .note-field{
+    width:100%;
+    min-height:44px;
+    margin-top:6px;
+    border:1.5px solid var(--line);
+    border-radius:10px;
+    padding:8px 10px;
+    font-family:inherit;
+    font-size:12.5px;
+    background:#fff;
+    resize:vertical;
+  }
+
+  textarea{
+    width:100%;
+    min-height:64px;
+    border:1.5px solid var(--line);
+    border-radius:12px;
+    padding:10px 12px;
+    font-family:inherit;
+    font-size:13.5px;
+    resize:vertical;
+    background:#fff;
+    margin-top:10px;
+  }
+  .qlabel{font-size:13px;font-weight:700;color:var(--moss-deep);margin-top:14px;display:block;}
+  .qlabel:first-of-type{margin-top:0;}
+
+  .complaint{
+    background:#fff0e9;
+    border:1.5px dashed var(--coral);
+    border-radius:12px;
+    padding:12px 12px 4px;
+    margin-top:14px;
+  }
+  .complaint .qlabel{color:var(--coral-deep);}
+
+  .gauge-wrap{text-align:center;padding:6px 0 2px;}
+  .gauge-track{
+    position:relative;
+    height:14px;
+    background:#e9e1c8;
+    border-radius:999px;
+    margin:18px 6px 10px;
+    overflow:visible;
+  }
+  .gauge-fill{
+    height:100%;
+    width:0%;
+    background:linear-gradient(90deg, var(--yolk), var(--coral));
+    border-radius:999px;
+    transition:width .6s ease;
+  }
+  .gauge-dino{
+    position:absolute;
+    top:-22px;
+    left:0%;
+    font-size:24px;
+    transition:left .6s ease;
+    transform:translateX(-50%);
+  }
+  .gauge-caption{font-size:13px;color:var(--moss-deep);font-weight:700;min-height:18px;}
+
+  .submit-btn{
+    display:block;
+    width:100%;
+    padding:15px;
+    background:var(--moss-deep);
+    color:var(--egg);
+    border:none;
+    border-radius:14px;
+    font-family:'Noto Sans TC',sans-serif;
+    font-weight:700;
+    font-size:15.5px;
+    letter-spacing:.04em;
+    cursor:pointer;
+    box-shadow:0 3px 0 #1c3226;
+    transition:transform .1s;
+  }
+  .submit-btn:active{transform:translateY(2px);box-shadow:0 1px 0 #1c3226;}
+
+  .result{
+    display:none;
+    text-align:center;
+    padding-top:6px;
+  }
+  .result.show{display:block;}
+  .result .big-score{
+    font-family:'Noto Sans TC',sans-serif;
+    font-size:56px;
+    color:var(--coral-deep);
+    margin:4px 0;
+  }
+  .result .tag{
+    display:inline-block;
+    background:var(--moss);
+    color:var(--egg);
+    font-size:12.5px;
+    font-weight:700;
+    padding:5px 14px;
+    border-radius:999px;
+    margin-bottom:14px;
+  }
+  .result .echo{
+    text-align:left;
+    background:#fff;
+    border:1.5px solid var(--line);
+    border-radius:12px;
+    padding:14px 16px;
+    font-size:13px;
+    line-height:1.7;
+    color:#4a4436;
+    white-space:pre-wrap;
+  }
+  .result .echo b{color:var(--moss-deep);}
+  .sign-row{
+    display:flex;
+    justify-content:space-between;
+    margin-top:20px;
+    font-size:12px;
+    color:#8a806b;
+  }
+  .sign-row div{flex:1;}
+  .sign-line{
+    border-top:1.5px solid var(--ink);
+    margin-top:26px;
+    padding-top:4px;
+    text-align:center;
+  }
+  .share-row{
+    display:flex;
+    gap:10px;
+    margin-top:14px;
+  }
+  .share-btn{
+    flex:1;
+    padding:12px;
+    background:#fff;
+    border:1.5px solid var(--moss-deep);
+    color:var(--moss-deep);
+    border-radius:12px;
+    font-family:'Noto Sans TC',sans-serif;
+    font-weight:700;
+    font-size:13.5px;
+    cursor:pointer;
+    transition:background .15s, transform .1s;
+  }
+  .share-btn:hover{background:#eef4ee;}
+  .share-btn:active{transform:translateY(1px);}
+  .share-status{
+    text-align:center;
+    font-size:12px;
+    color:var(--moss);
+    margin-top:8px;
+    min-height:16px;
+  }
+  footer{
+    text-align:center;
+    font-size:11px;
+    color:#a89d84;
+    margin-top:10px;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="trail" id="trail">
+    <span>🐾</span><span>🐾</span><span>🐾</span><span>🐾</span><span>🐾</span>
+  </div>
+
+  <header>
+    <div class="eyebrow">DINO CUSTOMER CARE · 恐龍女友服務部</div>
+    <h1>小咚服務滿意度調查表</h1>
+    <div class="sub">🦕出品・僅接受🦖本人填寫，評鑑對象為🦕・填完不用蓋章，誠實最重要</div>
+  </header>
+
+  <form id="form">
+
+    <div class="card" data-num="01">
+      <h2>填表人資料</h2>
+      <p class="hint">請如實填寫，這關係到後續是否有宵夜加碼。</p>
+      <div class="meta-row">
+        <label>填表人暱稱
+          <input type="text" id="name" placeholder="🦖">
+        </label>
+        <label>本次評分區間
+          <input type="text" id="period" placeholder="例：這週">
+        </label>
+      </div>
+    </div>
+
+    <div class="card" data-num="02">
+      <h2>服務評分</h2>
+      <p class="hint">請給予 1〜5 隻🦕評價，誠實作答，不列入年終考核（大概）。</p>
+      <div id="ratings"></div>
+    </div>
+
+    <div class="card" data-num="03">
+      <h2>開放式回饋</h2>
+      <p class="hint">文字不夠可以自己加行，我們洗耳恭聽。</p>
+      <label class="qlabel">本期印象最深刻的一件事</label>
+      <textarea id="q1" placeholder="寫下讓妳印象最深的瞬間..."></textarea>
+      <label class="qlabel">覺得加分、心動或溫暖感動的時刻</label>
+      <textarea id="q2" placeholder="哪個瞬間讓妳覺得心動或被暖到了..."></textarea>
+      <div class="complaint">
+        <label class="qlabel">🦖客訴專區（可認真可吐槽）</label>
+        <textarea id="q3" placeholder="這裡盡量發揮..."></textarea>
+      </div>
+      <label class="qlabel">對下期的期待清單</label>
+      <textarea id="q4" placeholder="希望下次可以..."></textarea>
+      <label class="qlabel">其他想說的話</label>
+      <textarea id="q5" placeholder="還有什麼想補充的..."></textarea>
+    </div>
+
+    <div class="card" data-num="04">
+      <h2>總體評價</h2>
+      <p class="hint">送出後會自動生成客服滿意度儀表，並附上簽署欄。</p>
+      <div class="gauge-wrap">
+        <div class="gauge-track">
+          <div class="gauge-dino" id="gaugeDino">🦕</div>
+          <div class="gauge-fill" id="gaugeFill"></div>
+        </div>
+        <div class="gauge-caption" id="gaugeCaption">請先完成上方評分</div>
+      </div>
+    </div>
+
+    <button type="submit" class="submit-btn">送出評鑑報告 🦖</button>
+  </form>
+
+  <div class="result" id="result">
+    <div class="card" id="reportCard" data-num="✓">
+      <div class="tag" id="resultTag">滿意度總評</div>
+      <div class="big-score" id="resultScore">0.0</div>
+      <div class="echo" id="resultEcho"></div>
+      <div class="sign-row">
+        <div>
+          <div class="sign-line">🦖 簽名</div>
+        </div>
+        <div style="width:20px"></div>
+        <div>
+          <div class="sign-line">🦕 已閱並會改進</div>
+        </div>
+      </div>
+    </div>
+    <div class="share-row">
+      <button type="button" class="share-btn" id="copyBtn">📋 複製報告文字</button>
+      <button type="button" class="share-btn" id="imgBtn">🖼️ 下載成圖片</button>
+    </div>
+    <div class="share-status" id="shareStatus"></div>
+  </div>
+
+  <footer>本表單僅供🦕🦖二人使用・所有評分均具有法律上的可愛效力</footer>
+</div>
+
+<script>
+const items = [
+  {key:'fun', label:'有趣程度', sub:'相處起來好不好玩、有沒有驚喜和新鮮感'},
+  {key:'thoughtful', label:'細膩體貼', sub:'有沒有讀懂情緒、接住需求'},
+  {key:'safety', label:'安全感', sub:'提供足夠的愛，讓妳感到安心、被珍視'},
+  {key:'intimacy', label:'親密行為', sub:'身體上的親密相處，滿不滿足、享不享受'},
+  {key:'sync', label:'生活合拍度', sub:'步調、習慣合不合拍'}
+];
+
+const ratingsDiv = document.getElementById('ratings');
+const scores = {};
+
+const notes = {};
+
+items.forEach(item=>{
+  scores[item.key] = 0;
+  notes[item.key] = '';
+  const row = document.createElement('div');
+  row.className = 'rate-item';
+  row.innerHTML = `
+    <div class="rate-row">
+      <div class="rate-label">${item.label}<small>${item.sub}</small></div>
+      <div class="stars" data-key="${item.key}">
+        ${[1,2,3,4,5].map(n=>`<button type="button" data-val="${n}">🦕</button>`).join('')}
+      </div>
+    </div>
+    <button type="button" class="note-toggle" data-key="${item.key}">+ 加註</button>
+    <textarea class="note-field" data-key="${item.key}" placeholder="想補充說明嗎（選填）..." style="display:none;"></textarea>
+  `;
+  ratingsDiv.appendChild(row);
+});
+
+document.querySelectorAll('.note-toggle').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    const key = btn.dataset.key;
+    const field = document.querySelector(`.note-field[data-key="${key}"]`);
+    const isOpen = field.style.display !== 'none';
+    field.style.display = isOpen ? 'none' : 'block';
+    btn.textContent = isOpen ? '+ 加註' : '− 收合加註';
+    btn.classList.toggle('open', !isOpen);
+  });
+});
+
+document.querySelectorAll('.note-field').forEach(field=>{
+  field.addEventListener('input', ()=>{
+    notes[field.dataset.key] = field.value;
+  });
+});
+
+document.querySelectorAll('.stars').forEach(starsEl=>{
+  const key = starsEl.dataset.key;
+  starsEl.querySelectorAll('button').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const val = parseInt(btn.dataset.val,10);
+      scores[key] = val;
+      [...starsEl.querySelectorAll('button')].forEach(b=>{
+        b.classList.toggle('on', parseInt(b.dataset.val,10) <= val);
+      });
+      updateGauge();
+      updateTrail();
+    });
+  });
+});
+
+const trailSpans = document.querySelectorAll('#trail span');
+function updateTrail(){
+  const filled = Object.values(scores).filter(v=>v>0).length;
+  const ratio = filled / items.length;
+  const activeCount = Math.round(ratio * trailSpans.length);
+  trailSpans.forEach((s,i)=> s.classList.toggle('active', i < activeCount));
+}
+
+const gaugeFill = document.getElementById('gaugeFill');
+const gaugeDino = document.getElementById('gaugeDino');
+const gaugeCaption = document.getElementById('gaugeCaption');
+
+function currentAverage(){
+  const vals = Object.values(scores).filter(v=>v>0);
+  if(vals.length===0) return 0;
+  return vals.reduce((a,b)=>a+b,0)/items.length; // unrated counts as 0 to encourage full completion
+}
+
+function captionFor(avg){
+  if(avg===0) return '請先完成上方評分';
+  if(avg < 2) return '🦖生氣中，需要立刻改進';
+  if(avg < 3.2) return '🦖尚可接受，但有努力空間';
+  if(avg < 4.2) return '🦖表示滿意，繼續保持';
+  return '🦖非常滿意，予以嘉獎';
+}
+
+function updateGauge(){
+  const avg = currentAverage(); // 0~5
+  const pct = (avg/5)*100;
+  gaugeFill.style.width = pct + '%';
+  gaugeDino.style.left = pct + '%';
+  gaugeCaption.textContent = captionFor(avg);
+}
+
+document.getElementById('form').addEventListener('submit', function(e){
+  e.preventDefault();
+  try{
+  const allRated = Object.values(scores).every(v=>v>0);
+  if(!allRated){
+    gaugeCaption.textContent = '⚠️ 還有項目沒評分，客服部門無法結案';
+    gaugeCaption.style.color = '#e8703f';
+    const gaugeCard = gaugeCaption.closest('.card');
+    gaugeCard.style.borderColor = '#ff8a65';
+    gaugeCard.scrollIntoView({behavior:'smooth', block:'center'});
+    setTimeout(()=>{ gaugeCard.style.borderColor = ''; }, 1600);
+    return;
+  }
+  const total = Object.values(scores).reduce((a,b)=>a+b,0);
+  const avg = total/items.length;
+
+  let tag, verdict;
+  if(avg < 2){tag='瀕臨解約邊緣';verdict='本期表現亮起紅燈，建議立即啟動補救措施。';}
+  else if(avg < 3.2){tag='待加強';verdict='整體堪用，但顧客體驗仍有明顯進步空間。';}
+  else if(avg < 4.2){tag='服務良好';verdict='顧客體驗穩定，維持水準即可續約。';}
+  else{tag='五星優質客服';verdict='本期表現優異，建議加薪（加宵夜）留任。';}
+
+  document.getElementById('resultTag').textContent = tag;
+  document.getElementById('resultScore').textContent = avg.toFixed(1) + ' / 5.0';
+
+  const name = document.getElementById('name').value || '🦖';
+  const period = document.getElementById('period').value || '本期';
+  const q1 = document.getElementById('q1').value || '（未填寫）';
+  const q2 = document.getElementById('q2').value || '（未填寫）';
+  const q3 = document.getElementById('q3').value || '（無客訴，暫且放過）';
+  const q4 = document.getElementById('q4').value || '（未填寫）';
+  const q5 = document.getElementById('q5').value || '（未填寫）';
+
+  const breakdown = items.map(it=>{
+    const line = `${it.label}：${'🦕'.repeat(scores[it.key])}${'･'.repeat(5-scores[it.key])} (${scores[it.key]}/5)`;
+    const note = notes[it.key] && notes[it.key].trim() ? `\n　　備註：${notes[it.key].trim()}` : '';
+    return line + note;
+  }).join('\n');
+
+  document.getElementById('resultEcho').innerHTML =
+    `<b>填表人：</b>${name}　<b>區間：</b>${period}\n\n` +
+    `<b>各項評分</b>\n${breakdown}\n\n` +
+    `<b>總評語：</b>${verdict}\n\n` +
+    `<b>印象最深：</b>${q1}\n` +
+    `<b>心動／溫暖時刻：</b>${q2}\n` +
+    `<b>客訴內容：</b>${q3}\n` +
+    `<b>下期期待：</b>${q4}\n` +
+    `<b>其他想說的話：</b>${q5}`;
+
+  lastReportText =
+    `🦕 小咚服務滿意度調查表 🦕\n` +
+    `填表人：${name}　區間：${period}\n` +
+    `總評：${tag}（${avg.toFixed(1)} / 5.0）\n\n` +
+    `【各項評分】\n${breakdown.replace(/\n　　備註/g,'\n備註')}\n\n` +
+    `總評語：${verdict}\n\n` +
+    `印象最深：${q1}\n` +
+    `心動／溫暖時刻：${q2}\n` +
+    `客訴內容：${q3}\n` +
+    `下期期待：${q4}\n` +
+    `其他想說的話：${q5}`;
+
+  document.getElementById('result').classList.add('show');
+  document.getElementById('result').scrollIntoView({behavior:'smooth', block:'start'});
+  }catch(err){
+    gaugeCaption.textContent = '⚠️ 發生錯誤：' + err.message;
+    gaugeCaption.style.color = '#e8703f';
+  }
+});
+
+let lastReportText = '';
+
+document.getElementById('copyBtn').addEventListener('click', async ()=>{
+  const status = document.getElementById('shareStatus');
+  try{
+    await navigator.clipboard.writeText(lastReportText);
+    status.textContent = '已複製到剪貼簿，可以直接貼上分享囉！';
+  }catch(err){
+    status.textContent = '複製失敗，請手動選取文字複製。';
+  }
+});
+
+document.getElementById('imgBtn').addEventListener('click', async ()=>{
+  const status = document.getElementById('shareStatus');
+  if(typeof html2canvas === 'undefined'){
+    status.textContent = '圖片功能載入失敗，請改用「複製報告文字」。';
+    return;
+  }
+  const card = document.getElementById('reportCard');
+  status.textContent = '圖片產生中...';
+  try{
+    const canvas = await html2canvas(card, {backgroundColor:'#fff8ea', scale:2});
+    canvas.toBlob(async (blob)=>{
+      const file = new File([blob], '小咚服務滿意度報告.png', {type:'image/png'});
+      if(navigator.canShare && navigator.canShare({files:[file]})){
+        try{
+          await navigator.share({files:[file], title:'小咚服務滿意度報告'});
+          status.textContent = '';
+          return;
+        }catch(err){ /* 使用者取消分享，改走下載 */ }
+      }
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = '小咚服務滿意度報告.png';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      status.textContent = '圖片已下載！';
+    }, 'image/png');
+  }catch(err){
+    status.textContent = '圖片產生失敗，請改用複製文字。';
+  }
+});
+</script>
+</body>
+</html>
