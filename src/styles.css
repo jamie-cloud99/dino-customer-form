@@ -107,21 +107,15 @@ h1{
 }
 
 .meta-row{
-  display:grid;
-  grid-template-columns:minmax(180px, 1fr) minmax(180px, 1fr);
+  display:flex;
+  flex-direction:column;
   gap:12px;
-  align-items:end;
 }
 
 .meta-row label{
   font-size:12.5px;
   color:var(--moss-deep);
   font-weight:700;
-  min-width:0;
-}
-
-.name-field{
-  grid-column:1;
 }
 
 .meta-row input{
@@ -134,10 +128,6 @@ h1{
   font-family:inherit;
   font-size:14px;
   background:#fff;
-}
-
-.date-field{
-  grid-column:2;
 }
 
 .rate-item{
@@ -381,11 +371,6 @@ footer{
   body{padding:24px 12px 64px;}
   h1{font-size:28px;}
   .card{padding:24px 18px;border-radius:18px;}
-  .meta-row{grid-template-columns:1fr;}
-  .name-field,
-  .date-field{
-    grid-column:auto;
-  }
   .rate-row{align-items:flex-start;gap:10px;}
   .stars button{font-size:20px;}
   .share-row{flex-direction:column;}
