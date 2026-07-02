@@ -49,6 +49,13 @@ document.querySelectorAll('.note-field').forEach((field) => {
   });
 });
 
+document.addEventListener('input', (event) => {
+  if(event.target.tagName === 'TEXTAREA'){
+    event.target.style.height = 'auto';
+    event.target.style.height = `${event.target.scrollHeight}px`;
+  }
+});
+
 document.querySelectorAll('.stars').forEach((starsEl) => {
   const key = starsEl.dataset.key;
 
